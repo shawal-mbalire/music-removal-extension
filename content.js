@@ -1,31 +1,45 @@
 console.log("Music Removal Extension Loaded");
 
-// Find YouTube's video element once
-const video = document.querySelector("video");
+// Ensure script runs only once
+if (window.hasRun) {
+  console.log("Script already running, exiting...");
+  return;
+} 
+window.hasRun = true;
 
-if (video) {
-  const audioContext = new AudioContext();
+// Track toggle state (syncs with storage)
+let musicRemovalEnabled = true;
+
+// Find YouTube's video element
+function setupAudioProcessing() {
+  const video = document.querySelector("video");
+  if (!video) {
+    console.warn("No video element found!");
+    return;
+  }
+
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioContext.createMediaElementSource(video);
 
-  // Band-pass filter to isolate vocal frequencies (300Hz - 3kHz)
+  // Band-pass filter to keep vocals (300Hz - 3kHz)
   const bandPassFilter = audioContext.createBiquadFilter();
   bandPassFilter.type = "bandpass";
-  bandPassFilter.frequency.value = 1000; // Center frequency for vocals
-  bandPassFilter.Q = 1.5; // Adjust to fine-tune
+  bandPassFilter.frequency.value = 1000;
+  bandPassFilter.Q = 1.5;
 
-  // High-pass filter to remove low-frequency instruments
+  // High-pass filter (removes low-frequency instruments)
   const highPassFilter = audioContext.createBiquadFilter();
   highPassFilter.type = "highpass";
-  highPassFilter.frequency.value = 300; // Cutoff at 300Hz
+  highPassFilter.frequency.value = 300;
 
-  // Low-pass filter to remove high-frequency instruments
+  // Low-pass filter (removes high-frequency instruments)
   const lowPassFilter = audioContext.createBiquadFilter();
   lowPassFilter.type = "lowpass";
-  lowPassFilter.frequency.value = 3000; // Cutoff at 3kHz
+  lowPassFilter.frequency.value = 3000;
 
   // Gain node for volume control
   const gainNode = audioContext.createGain();
-  gainNode.gain.value = 1.0; // Default volume
+  gainNode.gain.value = 1.0;
 
   // Analyser for real-time audio analysis
   const analyser = audioContext.createAnalyser();
@@ -45,14 +59,11 @@ if (video) {
   function analyzeAudio() {
     analyser.getByteFrequencyData(dataArray);
 
-    // Detect presence of music
-    const hasMusic = detectMusic(dataArray);
-
-    if (hasMusic) {
-      console.log("Music detected! Attenuating...");
-      gainNode.gain.value = 0.3; // Reduce volume when music is detected
+    if (musicRemovalEnabled) {
+      const hasMusic = detectMusic(dataArray);
+      gainNode.gain.value = hasMusic ? 0.3 : 1.0; // Reduce music volume
     } else {
-      gainNode.gain.value = 1.0; // Restore full volume for vocals
+      gainNode.gain.value = 1.0; // Full volume if disabled
     }
 
     requestAnimationFrame(analyzeAudio);
@@ -61,7 +72,7 @@ if (video) {
   analyzeAudio();
 }
 
-// Function to detect music presence
+// Function to detect music
 function detectMusic(frequencyData) {
   let sum = 0;
   for (let i = 0; i < frequencyData.length; i++) {
@@ -71,9 +82,23 @@ function detectMusic(frequencyData) {
   return average > 50; // Adjust threshold as needed
 }
 
-// Listen for messages (toggle feature)
+// Handle toggle button events
 window.addEventListener("message", function (event) {
   if (event.data.type === "TOGGLE_MUSIC_REMOVAL") {
-    console.log("Music Removal Toggled:", event.data.enabled);
+    musicRemovalEnabled = event.data.enabled;
+    console.log("Music Removal Toggled:", musicRemovalEnabled);
   }
 });
+
+// Detect YouTube navigation changes and restart the script
+const observer = new MutationObserver(() => {
+  if (document.querySelector("video")) {
+    console.log("YouTube navigation detected. Restarting script...");
+    setupAudioProcessing();
+  }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
+
+// Run audio processing initially
+setupAudioProcessing();
