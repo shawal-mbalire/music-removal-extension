@@ -6,69 +6,74 @@ const video = document.querySelector("video");
 if (video) {
   const audioContext = new AudioContext();
   const source = audioContext.createMediaElementSource(video);
-  
-  // Create a gain node (placeholder for future processing)
-  const gainNode = audioContext.createGain();
-  source.connect(gainNode).connect(audioContext.destination);
-  
-  console.log("Audio processing initialized.");
 
-  // Set up an analyser for real-time audio analysis
+  // Band-pass filter to isolate vocal frequencies (300Hz - 3kHz)
+  const bandPassFilter = audioContext.createBiquadFilter();
+  bandPassFilter.type = "bandpass";
+  bandPassFilter.frequency.value = 1000; // Center frequency for vocals
+  bandPassFilter.Q = 1.5; // Adjust to fine-tune
+
+  // High-pass filter to remove low-frequency instruments
+  const highPassFilter = audioContext.createBiquadFilter();
+  highPassFilter.type = "highpass";
+  highPassFilter.frequency.value = 300; // Cutoff at 300Hz
+
+  // Low-pass filter to remove high-frequency instruments
+  const lowPassFilter = audioContext.createBiquadFilter();
+  lowPassFilter.type = "lowpass";
+  lowPassFilter.frequency.value = 3000; // Cutoff at 3kHz
+
+  // Gain node for volume control
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 1.0; // Default volume
+
+  // Analyser for real-time audio analysis
   const analyser = audioContext.createAnalyser();
-  analyser.fftSize = 2048; // Controls frequency resolution
-  
-  // Connect the source to the analyser and then to the destination
-  source.connect(analyser);
-  analyser.connect(audioContext.destination);
-  
-  // Create a buffer for the frequency data
+  analyser.fftSize = 2048;
   const dataArray = new Uint8Array(analyser.frequencyBinCount);
-  
+
+  // Connect audio processing nodes
+  source.connect(highPassFilter);
+  highPassFilter.connect(bandPassFilter);
+  bandPassFilter.connect(lowPassFilter);
+  lowPassFilter.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  source.connect(analyser);
+
+  console.log("Audio filtering initialized.");
+
   function analyzeAudio() {
     analyser.getByteFrequencyData(dataArray);
-    
-    // Check for music frequency patterns
+
+    // Detect presence of music
     const hasMusic = detectMusic(dataArray);
-    
+
     if (hasMusic) {
-      console.log("Music detected!");
-      muteMusic();
+      console.log("Music detected! Attenuating...");
+      gainNode.gain.value = 0.3; // Reduce volume when music is detected
     } else {
-      unmuteMusic();
+      gainNode.gain.value = 1.0; // Restore full volume for vocals
     }
-    
+
     requestAnimationFrame(analyzeAudio);
   }
-  
+
   analyzeAudio();
-  
-  // Function to mute only music (TBD: More advanced processing)
-  function muteMusic() {
-    video.volume = 0.2; // Lower volume as a placeholder
-  }
-  
-  function unmuteMusic() {
-    video.volume = 1.0;
-  }
 }
 
-// Listen for messages (e.g., to toggle music removal)
-window.addEventListener("message", function (event) {
-  if (event.data.type === "TOGGLE_MUSIC_REMOVAL") {
-    console.log("Music Removal Toggled:", event.data.enabled);
-    
-    // Future audio processing logic will go here
-  }
-});
-
-// Function to detect music (basic example)
+// Function to detect music presence
 function detectMusic(frequencyData) {
   let sum = 0;
   for (let i = 0; i < frequencyData.length; i++) {
     sum += frequencyData[i];
   }
   const average = sum / frequencyData.length;
-  
-  // If the average frequency level is above a threshold, assume music is present
-  return average > 50; // Tweak this threshold as needed
+  return average > 50; // Adjust threshold as needed
 }
+
+// Listen for messages (toggle feature)
+window.addEventListener("message", function (event) {
+  if (event.data.type === "TOGGLE_MUSIC_REMOVAL") {
+    console.log("Music Removal Toggled:", event.data.enabled);
+  }
+});
