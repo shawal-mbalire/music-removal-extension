@@ -3,16 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Removal</title>
+    <title>Universal Music Removal</title>
     <link rel="stylesheet" href="popup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>YouTube Music Removal</h2>
-    <label class="switch">
-        <input type="checkbox" id="toggleMusicRemoval">
-        <span class="slider round"></span>
-    </label>
-    <p id="statusText">Music Removal: OFF</p>
+    <div class="app">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🎵</div>
+                <div class="logo-text">
+                    <h1>Universal Music Removal</h1>
+                    <p class="subtitle">Remove background music from any video</p>
+                </div>
+            </div>
+            <div class="version-badge">v1.1</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Panel -->
+            <section class="control-panel">
+                <div class="control-group">
+                    <div class="control-label">
+                        <span class="icon">🎚️</span>
+                        <span>Music Removal</span>
+                    </div>
+                    <label class="switch" role="switch" aria-checked="false" tabindex="0">
+                        <input type="checkbox" id="toggleMusicRemoval" aria-label="Toggle music removal">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
+                <!-- Status Display -->
+                <div class="status-card" id="statusCard">
+                    <div class="status-header">
+                        <span class="status-icon" id="statusIcon">⏸️</span>
+                        <span class="status-text" id="statusText">Music Removal: OFF</span>
+                    </div>
+                    <div class="status-details">
+                        <p class="site-info" id="siteInfo">No video detected</p>
+                        <p class="processing-info" id="processingInfo">Ready to process audio</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="selectVideoBtn" class="btn btn-primary" aria-label="Select video manually">
+                        <span class="btn-icon">🎯</span>
+                        <span class="btn-text">Select Video Manually</span>
+                    </button>
+                    <button id="refreshBtn" class="btn btn-secondary" aria-label="Refresh video detection">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">Refresh Detection</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Platform Support -->
+            <section class="platform-support">
+                <h3 class="section-title">
+                    <span class="icon">🌐</span>
+                    Supported Platforms
+                </h3>
+                <div class="platform-grid">
+                    <div class="platform-category">
+                        <h4>Streaming Services</h4>
+                        <div class="platform-tags">
+                            <span class="platform-tag youtube">YouTube</span>
+                            <span class="platform-tag netflix">Netflix</span>
+                            <span class="platform-tag hulu">Hulu</span>
+                            <span class="platform-tag disney">Disney+</span>
+                            <span class="platform-tag amazon">Prime</span>
+                        </div>
+                    </div>
+                    <div class="platform-category">
+                        <h4>Social Media</h4>
+                        <div class="platform-tags">
+                            <span class="platform-tag facebook">Facebook</span>
+                            <span class="platform-tag instagram">Instagram</span>
+                            <span class="platform-tag tiktok">TikTok</span>
+                            <span class="platform-tag twitch">Twitch</span>
+                        </div>
+                    </div>
+                    <div class="platform-category">
+                        <h4>Video Platforms</h4>
+                        <div class="platform-tags">
+                            <span class="platform-tag vimeo">Vimeo</span>
+                            <span class="platform-tag dailymotion">Dailymotion</span>
+                            <span class="platform-tag bilibili">Bilibili</span>
+                            <span class="platform-tag niconico">Niconico</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="universal-note">
+                    <span class="icon">✨</span>
+                    <span>Manual selection works on any website with video content</span>
+                </div>
+            </section>
+
+            <!-- Quick Stats -->
+            <section class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="processedVideos">0</div>
+                    <div class="stat-label">Videos Processed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="activeTime">0m</div>
+                    <div class="stat-label">Active Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="musicRemoved">0%</div>
+                    <div class="stat-label">Music Removed</div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <button id="settingsBtn" class="footer-link" aria-label="Open settings">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </button>
+                    <button id="helpBtn" class="footer-link" aria-label="Get help">
+                        <span class="icon">❓</span>
+                        <span>Help</span>
+                    </button>
+                </div>
+                <div class="footer-status">
+                    <span class="connection-status" id="connectionStatus">🟢 Connected</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Processing audio...</p>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
 
     <script src="popup.js"></script>
 </body>

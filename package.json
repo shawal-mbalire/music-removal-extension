@@ -1,0 +1,80 @@
+{
+  "name": "universal-music-removal-extension",
+  "version": "1.1.0",
+  "description": "A browser extension that removes background music from videos across multiple platforms while preserving speech audio in near real-time.",
+  "main": "content.js",
+  "scripts": {
+    "test": "node tests/test-suite.js",
+    "test:chrome": "node tests/browser-test-runner.js chrome",
+    "test:firefox": "node tests/browser-test-runner.js firefox",
+    "test:safari": "node tests/browser-test-runner.js safari",
+    "test:edge": "node tests/browser-test-runner.js edge",
+    "test:all-browsers": "node tests/browser-test-runner.js",
+    "test:watch": "nodemon --watch . --ext js,json,html,css --exec 'npm test'",
+    "test:cross-browser": "npm run test:all-browsers",
+    "lint": "eslint *.js popup/*.js tests/*.js",
+    "lint:fix": "eslint *.js popup/*.js tests/*.js --fix",
+    "validate": "node -e \"console.log('Validating extension...'); require('./tests/test-suite.js').runTests()\"",
+    "validate:browser": "npm run test:all-browsers",
+    "build": "echo 'Extension is ready for distribution'",
+    "dev": "npm run test && npm run lint",
+    "prepublish": "npm run test:cross-browser && npm run lint",
+    "ci": "npm run test:all-browsers && npm run lint"
+  },
+  "keywords": [
+    "browser-extension",
+    "music-removal",
+    "audio-processing",
+    "youtube",
+    "netflix",
+    "video",
+    "speech-enhancement",
+    "chrome-extension",
+    "firefox-addon",
+    "safari-extension",
+    "edge-extension",
+    "cross-browser",
+    "web-audio-api"
+  ],
+  "author": "Universal Music Removal Team",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/universal-music-removal-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/universal-music-removal-extension/issues"
+  },
+  "homepage": "https://github.com/your-username/universal-music-removal-extension#readme",
+  "browserslist": [
+    "Chrome >= 88",
+    "Firefox >= 109",
+    "Safari >= 14",
+    "Edge >= 88"
+  ],
+  "browser": {
+    "chrome": {
+      "minimum_version": "88",
+      "recommended_version": "latest"
+    },
+    "firefox": {
+      "minimum_version": "109",
+      "recommended_version": "latest"
+    },
+    "safari": {
+      "minimum_version": "14",
+      "recommended_version": "latest"
+    },
+    "edge": {
+      "minimum_version": "88",
+      "recommended_version": "latest"
+    }
+  }
+} 
