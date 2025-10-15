@@ -31,21 +31,21 @@ class PopupManager {
     this.elements.statusCard = document.getElementById('statusCard');
     this.elements.siteInfo = document.getElementById('siteInfo');
     this.elements.processingInfo = document.getElementById('processingInfo');
-    
+
     // Action buttons
     this.elements.selectVideoBtn = document.getElementById('selectVideoBtn');
     this.elements.refreshBtn = document.getElementById('refreshBtn');
-    
+
     // Stats
     this.elements.processedVideos = document.getElementById('processedVideos');
     this.elements.activeTime = document.getElementById('activeTime');
     this.elements.musicRemoved = document.getElementById('musicRemoved');
-    
+
     // Footer
     this.elements.connectionStatus = document.getElementById('connectionStatus');
     this.elements.settingsBtn = document.getElementById('settingsBtn');
     this.elements.helpBtn = document.getElementById('helpBtn');
-    
+
     // Overlays
     this.elements.loadingOverlay = document.getElementById('loadingOverlay');
     this.elements.notificationContainer = document.getElementById('notificationContainer');
@@ -54,15 +54,15 @@ class PopupManager {
   bindEvents() {
     // Toggle functionality
     this.elements.toggle.addEventListener('change', () => this.handleToggle());
-    
+
     // Action buttons
     this.elements.selectVideoBtn.addEventListener('click', () => this.handleManualSelection());
     this.elements.refreshBtn.addEventListener('click', () => this.handleRefresh());
-    
+
     // Footer buttons
     this.elements.settingsBtn.addEventListener('click', () => this.openSettings());
     this.elements.helpBtn.addEventListener('click', () => this.openHelp());
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => this.handleKeyboard(e));
   }
@@ -111,7 +111,7 @@ class PopupManager {
       if (tabs && tabs[0] && tabs[0].url) {
         const url = new URL(tabs[0].url);
         const hostname = url.hostname;
-        
+
         const siteNames = {
           'youtube.com': 'YouTube',
           'www.youtube.com': 'YouTube',
@@ -143,7 +143,7 @@ class PopupManager {
 
         this.currentSite = siteNames[hostname] || 'Unknown Site';
         this.elements.siteInfo.textContent = `Current site: ${this.currentSite}`;
-        
+
         const isSupported = Object.keys(siteNames).includes(hostname);
         if (!isSupported) {
           this.elements.siteInfo.textContent += ' (Manual selection recommended)';
@@ -165,19 +165,19 @@ class PopupManager {
   async handleToggle() {
     this.isEnabled = this.elements.toggle.checked;
     this.updateStatusDisplay();
-    
+
     try {
-      const response = await this.sendMessage({ 
-        type: 'SET_STATE', 
-        enabled: this.isEnabled 
+      const response = await this.sendMessage({
+        type: 'SET_STATE',
+        enabled: this.isEnabled
       });
-      
+
       if (response && response.success) {
         this.showNotification(
           this.isEnabled ? 'Music removal enabled' : 'Music removal disabled',
           'success'
         );
-        
+
         if (this.isEnabled) {
           this.stats.processedVideos++;
           this.updateStats();
@@ -198,7 +198,7 @@ class PopupManager {
   async handleManualSelection() {
     try {
       this.showLoading('Starting video selection...');
-      
+
       const response = await this.sendMessage({ type: 'SELECT_VIDEO' });
       if (response && response.success) {
         this.showNotification('Video selection mode activated', 'success');
@@ -216,7 +216,7 @@ class PopupManager {
   async handleRefresh() {
     try {
       this.showLoading('Refreshing page...');
-      
+
       const tabs = await this.getCurrentTab();
       if (tabs && tabs[0]) {
         await chrome.tabs.reload(tabs[0].id);
@@ -240,30 +240,30 @@ class PopupManager {
   handleKeyboard(event) {
     // Keyboard shortcuts
     switch (event.key) {
-      case 't':
-      case 'T':
-        if (event.ctrlKey || event.metaKey) {
-          event.preventDefault();
-          this.elements.toggle.click();
-        }
-        break;
-      case 's':
-      case 'S':
-        if (event.ctrlKey || event.metaKey) {
-          event.preventDefault();
-          this.elements.selectVideoBtn.click();
-        }
-        break;
-      case 'r':
-      case 'R':
-        if (event.ctrlKey || event.metaKey) {
-          event.preventDefault();
-          this.elements.refreshBtn.click();
-        }
-        break;
-      case 'Escape':
-        window.close();
-        break;
+    case 't':
+    case 'T':
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        this.elements.toggle.click();
+      }
+      break;
+    case 's':
+    case 'S':
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        this.elements.selectVideoBtn.click();
+      }
+      break;
+    case 'r':
+    case 'R':
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        this.elements.refreshBtn.click();
+      }
+      break;
+    case 'Escape':
+      window.close();
+      break;
     }
   }
 
@@ -280,7 +280,7 @@ class PopupManager {
     this.elements.processedVideos.textContent = this.stats.processedVideos;
     this.elements.activeTime.textContent = this.formatTime(this.stats.activeTime);
     this.elements.musicRemoved.textContent = `${Math.min(this.stats.processedVideos * 15, 95)}%`;
-    
+
     // Save stats to storage
     this.saveStats();
   }
@@ -327,18 +327,18 @@ class PopupManager {
   showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
-    
+
     const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️';
-    
+
     notification.innerHTML = `
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 16px;">${icon}</span>
         <span style="font-size: 14px;">${message}</span>
       </div>
     `;
-    
+
     this.elements.notificationContainer.appendChild(notification);
-    
+
     // Auto-remove after 3 seconds
     setTimeout(() => {
       if (notification.parentNode) {

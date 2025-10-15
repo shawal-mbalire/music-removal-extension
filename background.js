@@ -15,11 +15,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true; // Keep message channel open for async response
   }
-  
+
   if (request.type === 'SET_STATE') {
     chrome.storage.sync.set({ musicRemovalEnabled: request.enabled });
     // Notify all tabs about state change
-    chrome.tabs.query({ url: ["<all_urls>"] }, (tabs) => {
+    chrome.tabs.query({ url: ['<all_urls>'] }, (tabs) => {
       tabs.forEach(tab => {
         chrome.tabs.sendMessage(tab.id, {
           type: 'STATE_CHANGED',
@@ -58,7 +58,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       'nicovideo.jp'
     ];
 
-    const isVideoPlatform = videoPlatforms.some(platform => 
+    const isVideoPlatform = videoPlatforms.some(platform =>
       tab.url && tab.url.includes(platform)
     );
 
@@ -79,9 +79,9 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.storage.sync.get(['musicRemovalEnabled'], (result) => {
     const currentState = result.musicRemovalEnabled !== false;
     const newState = !currentState;
-    
+
     chrome.storage.sync.set({ musicRemovalEnabled: newState });
-    
+
     // Notify content script
     chrome.tabs.sendMessage(tab.id, {
       type: 'STATE_CHANGED',

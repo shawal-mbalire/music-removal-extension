@@ -9,10 +9,10 @@ class BrowserTestConfig {
 
   detectBrowser() {
     const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('firefox')) return 'firefox';
-    if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'safari';
-    if (userAgent.includes('edge')) return 'edge';
-    if (userAgent.includes('chrome')) return 'chrome';
+    if (userAgent.includes('firefox')) {return 'firefox';}
+    if (userAgent.includes('safari') && !userAgent.includes('chrome')) {return 'safari';}
+    if (userAgent.includes('edge')) {return 'edge';}
+    if (userAgent.includes('chrome')) {return 'chrome';}
     return 'unknown';
   }
 
@@ -69,7 +69,7 @@ class BrowserTestConfig {
         features: []
       }
     };
-    
+
     return configs[this.browserType] || configs.unknown;
   }
 
@@ -203,7 +203,7 @@ class BrowserTestConfig {
   // Browser-specific test methods
   async runBrowserTests() {
     console.log(`🧪 Running tests for ${this.config.name} (${this.browserType})`);
-    
+
     const results = {
       browser: this.config.name,
       version: this.getBrowserVersion(),
@@ -234,22 +234,22 @@ class BrowserTestConfig {
       if (AudioContextClass) {
         const audioContext = new AudioContextClass();
         tests.audioContext = true;
-        
+
         // Test Web Audio API features
         if (audioContext.createAnalyser) {
           tests.analyser = true;
         }
-        
+
         if (audioContext.createBiquadFilter) {
           tests.filters = true;
         }
-        
+
         if (audioContext.createMediaElementSource) {
           tests.mediaElementSource = true;
         }
-        
+
         tests.webAudio = tests.analyser && tests.filters && tests.mediaElementSource;
-        
+
         // Cleanup
         if (audioContext.state !== 'closed') {
           await audioContext.close();
@@ -299,20 +299,20 @@ class BrowserTestConfig {
       const testElement = document.createElement('div');
       testElement.style.display = 'grid';
       tests.cssGrid = testElement.style.display === 'grid';
-      
+
       testElement.style.display = 'flex';
       tests.flexbox = testElement.style.display === 'flex';
-      
+
       // Test animations
       testElement.style.animation = 'test 1s';
       tests.animations = testElement.style.animation !== '';
-      
+
       // Test web fonts
       tests.webFonts = 'fonts' in document;
-      
+
       // Test localStorage
       tests.localStorage = 'localStorage' in window;
-      
+
     } catch (error) {
       console.error('UI feature test failed:', error);
     }
@@ -333,11 +333,11 @@ class BrowserTestConfig {
       if ('memory' in performance) {
         tests.memoryUsage = performance.memory.usedJSHeapSize;
       }
-      
+
       // Test frame rate
       let frameCount = 0;
       const startTime = performance.now();
-      
+
       const measureFrameRate = () => {
         frameCount++;
         if (performance.now() - startTime < 1000) {
@@ -346,12 +346,12 @@ class BrowserTestConfig {
           tests.frameRate = frameCount;
         }
       };
-      
+
       requestAnimationFrame(measureFrameRate);
-      
+
       // Wait for frame rate measurement
       await new Promise(resolve => setTimeout(resolve, 1100));
-      
+
     } catch (error) {
       console.error('Performance test failed:', error);
     }
@@ -400,7 +400,7 @@ class BrowserTestConfig {
   // Generate test report
   generateReport(testResults) {
     const recommendations = this.getRecommendations();
-    
+
     return {
       browser: this.config.name,
       version: this.getBrowserVersion(),
@@ -415,4 +415,4 @@ class BrowserTestConfig {
 // Export for use in test suite
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = BrowserTestConfig;
-} 
+}

@@ -94,7 +94,7 @@ class VideoSelector {
 
   highlightVideoElements() {
     const videos = this.findVideoElements();
-    
+
     videos.forEach((video, index) => {
       const highlight = document.createElement('div');
       highlight.className = 'music-removal-video-highlight';
@@ -108,33 +108,33 @@ class VideoSelector {
         transition: all 0.2s ease;
         box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
       `;
-      
+
       // Position the highlight
       const rect = video.getBoundingClientRect();
       highlight.style.top = rect.top + 'px';
       highlight.style.left = rect.left + 'px';
       highlight.style.width = rect.width + 'px';
       highlight.style.height = rect.height + 'px';
-      
+
       // Add hover effect
       highlight.addEventListener('mouseenter', () => {
         highlight.style.borderColor = '#e74c3c';
         highlight.style.background = 'rgba(231, 76, 60, 0.3)';
         highlight.style.boxShadow = '0 0 15px rgba(231, 76, 60, 0.7)';
       });
-      
+
       highlight.addEventListener('mouseleave', () => {
         highlight.style.borderColor = '#3498db';
         highlight.style.background = 'rgba(52, 152, 219, 0.2)';
         highlight.style.boxShadow = '0 0 10px rgba(52, 152, 219, 0.5)';
       });
-      
+
       // Add click handler
       highlight.addEventListener('click', (e) => {
         e.stopPropagation();
         this.selectVideo(video);
       });
-      
+
       document.body.appendChild(highlight);
       this.highlightedElements.push(highlight);
     });
@@ -146,7 +146,7 @@ class VideoSelector {
 
   updateHighlights() {
     const videos = this.findVideoElements();
-    
+
     this.highlightedElements.forEach((highlight, index) => {
       if (videos[index]) {
         const rect = videos[index].getBoundingClientRect();
@@ -165,7 +165,7 @@ class VideoSelector {
       }
     });
     this.highlightedElements = [];
-    
+
     // Remove event listeners
     window.removeEventListener('scroll', this.updateHighlights.bind(this));
     window.removeEventListener('resize', this.updateHighlights.bind(this));
@@ -204,36 +204,36 @@ class VideoSelector {
     if (element.tagName === 'VIDEO') {
       return true;
     }
-    
+
     if (element.tagName === 'IFRAME') {
       const src = element.src || '';
       return src.includes('video') || src.includes('player') || src.includes('embed');
     }
-    
+
     if (element.tagName === 'EMBED' || element.tagName === 'OBJECT') {
       const type = element.type || '';
       return type.includes('video') || type.includes('application/x-shockwave-flash');
     }
-    
+
     // Check for video-related attributes
-    const hasVideoAttr = element.hasAttribute('data-video') || 
+    const hasVideoAttr = element.hasAttribute('data-video') ||
                         element.hasAttribute('data-player') ||
                         element.className.includes('video') ||
                         element.id.includes('video') ||
                         element.className.includes('player') ||
                         element.id.includes('player');
-    
+
     return hasVideoAttr;
   }
 
   selectVideo(video) {
     this.selectedVideo = video;
     this.stopSelection();
-    
+
     if (this.callback) {
       this.callback(video);
     }
-    
+
     // Show success message
     this.showSuccessMessage(video);
   }
@@ -254,7 +254,7 @@ class VideoSelector {
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       animation: slideIn 0.3s ease;
     `;
-    
+
     message.innerHTML = `
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="font-size: 18px;">✅</span>
@@ -264,7 +264,7 @@ class VideoSelector {
         </div>
       </div>
     `;
-    
+
     // Add CSS animation
     const style = document.createElement('style');
     style.textContent = `
@@ -274,9 +274,9 @@ class VideoSelector {
       }
     `;
     document.head.appendChild(style);
-    
+
     document.body.appendChild(message);
-    
+
     // Remove message after 3 seconds
     setTimeout(() => {
       if (message.parentNode) {
@@ -296,7 +296,7 @@ class VideoSelector {
       }
     };
     document.addEventListener('keydown', this.escListener);
-    
+
     // Add click outside listener
     this.clickOutsideListener = (e) => {
       if (e.target === this.overlay) {
@@ -311,7 +311,7 @@ class VideoSelector {
       document.removeEventListener('keydown', this.escListener);
       this.escListener = null;
     }
-    
+
     if (this.clickOutsideListener) {
       document.removeEventListener('click', this.clickOutsideListener);
       this.clickOutsideListener = null;
@@ -332,4 +332,4 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = VideoSelector;
 } else {
   window.VideoSelector = VideoSelector;
-} 
+}
