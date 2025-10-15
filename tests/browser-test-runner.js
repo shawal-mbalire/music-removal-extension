@@ -16,13 +16,13 @@ class BrowserTestRunner {
 
   async runAllBrowserTests() {
     console.log('🚀 Starting Cross-Browser Test Suite\n');
-    
+
     const startTime = Date.now();
-    
+
     for (const browser of this.browsers) {
       console.log(`\n🌐 Testing ${browser.toUpperCase()}...`);
       console.log('='.repeat(50));
-      
+
       try {
         const result = await this.runBrowserTest(browser);
         this.results[browser] = result;
@@ -31,10 +31,10 @@ class BrowserTestRunner {
         this.results[browser] = { error: error.message };
       }
     }
-    
+
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
-    
+
     this.printSummary(duration);
     this.generateReport();
   }
@@ -42,10 +42,10 @@ class BrowserTestRunner {
   async runBrowserTest(browser) {
     // Set environment variable for browser-specific testing
     process.env.TEST_BROWSER = browser;
-    
+
     // Create test suite instance
     const suite = new this.testSuite();
-    
+
     // Capture console output
     const originalLog = console.log;
     const logs = [];
@@ -53,11 +53,11 @@ class BrowserTestRunner {
       logs.push(args.join(' '));
       originalLog(...args);
     };
-    
+
     try {
       // Run tests
       await suite.runTests();
-      
+
       return {
         success: true,
         results: suite.results,
@@ -81,23 +81,23 @@ class BrowserTestRunner {
     console.log('='.repeat(50));
     console.log(`Total Duration: ${duration.toFixed(2)}s`);
     console.log('');
-    
+
     const summary = {
       total: 0,
       passed: 0,
       failed: 0,
       browsers: {}
     };
-    
+
     for (const [browser, result] of Object.entries(this.results)) {
       if (result.success) {
         const { passed, failed, total } = result.results;
         const successRate = ((passed / total) * 100).toFixed(1);
-        
+
         summary.total += total;
         summary.passed += passed;
         summary.failed += failed;
-        
+
         summary.browsers[browser] = {
           status: '✅ PASSED',
           passed,
@@ -105,7 +105,7 @@ class BrowserTestRunner {
           total,
           successRate: `${successRate}%`
         };
-        
+
         console.log(`${browser.toUpperCase().padEnd(10)} ${summary.browsers[browser].status}`);
         console.log(`           Tests: ${passed}/${total} (${successRate}%)`);
       } else {
@@ -113,19 +113,19 @@ class BrowserTestRunner {
           status: '❌ FAILED',
           error: result.error
         };
-        
+
         console.log(`${browser.toUpperCase().padEnd(10)} ${summary.browsers[browser].status}`);
         console.log(`           Error: ${result.error}`);
       }
       console.log('');
     }
-    
+
     // Overall summary
     if (summary.total > 0) {
       const overallSuccessRate = ((summary.passed / summary.total) * 100).toFixed(1);
       console.log(`Overall Success Rate: ${overallSuccessRate}% (${summary.passed}/${summary.total})`);
     }
-    
+
     // Browser compatibility matrix
     this.printCompatibilityMatrix();
   }
@@ -133,7 +133,7 @@ class BrowserTestRunner {
   printCompatibilityMatrix() {
     console.log('\n🔧 Browser Compatibility Matrix');
     console.log('='.repeat(50));
-    
+
     const features = [
       'Audio Processing',
       'Video Detection',
@@ -142,7 +142,7 @@ class BrowserTestRunner {
       'Extension APIs',
       'Performance'
     ];
-    
+
     const compatibility = {
       chrome: {
         'Audio Processing': '✅ Full',
@@ -177,11 +177,11 @@ class BrowserTestRunner {
         'Performance': '✅ Excellent'
       }
     };
-    
+
     // Print header
     console.log('Feature'.padEnd(20) + 'Chrome'.padEnd(12) + 'Firefox'.padEnd(12) + 'Safari'.padEnd(12) + 'Edge');
     console.log('-'.repeat(70));
-    
+
     // Print feature rows
     features.forEach(feature => {
       const row = [
@@ -206,11 +206,11 @@ class BrowserTestRunner {
       results: this.results,
       recommendations: this.getRecommendations()
     };
-    
+
     // Save report to file
     const reportPath = path.join(__dirname, 'browser-test-report.json');
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    
+
     console.log(`\n📄 Test report saved to: ${reportPath}`);
   }
 
@@ -267,29 +267,29 @@ class BrowserTestRunner {
   // Utility methods
   getBrowserStatus(browser) {
     const result = this.results[browser];
-    if (!result) return 'NOT_TESTED';
-    if (!result.success) return 'FAILED';
-    
+    if (!result) {return 'NOT_TESTED';}
+    if (!result.success) {return 'FAILED';}
+
     const { passed, total } = result.results;
     const successRate = (passed / total) * 100;
-    
-    if (successRate >= 95) return 'EXCELLENT';
-    if (successRate >= 90) return 'VERY_GOOD';
-    if (successRate >= 80) return 'GOOD';
+
+    if (successRate >= 95) {return 'EXCELLENT';}
+    if (successRate >= 90) {return 'VERY_GOOD';}
+    if (successRate >= 80) {return 'GOOD';}
     return 'POOR';
   }
 
   getOverallStatus() {
     const statuses = this.browsers.map(browser => this.getBrowserStatus(browser));
-    
+
     if (statuses.every(s => s === 'EXCELLENT' || s === 'VERY_GOOD')) {
       return 'READY_FOR_DEPLOYMENT';
     }
-    
+
     if (statuses.some(s => s === 'EXCELLENT' || s === 'VERY_GOOD')) {
       return 'PARTIAL_DEPLOYMENT';
     }
-    
+
     return 'NEEDS_IMPROVEMENT';
   }
 }
@@ -297,16 +297,16 @@ class BrowserTestRunner {
 // CLI interface
 if (require.main === module) {
   const runner = new BrowserTestRunner();
-  
+
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0) {
     // Run all browser tests
     runner.runAllBrowserTests().catch(console.error);
   } else {
     // Run specific browser test
     const browser = args[0].toLowerCase();
-    
+
     if (runner.browsers.includes(browser)) {
       console.log(`🧪 Running ${browser} tests...`);
       runner.runBrowserTest(browser).then(result => {
@@ -320,4 +320,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = BrowserTestRunner; 
+module.exports = BrowserTestRunner;

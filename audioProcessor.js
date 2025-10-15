@@ -19,7 +19,7 @@ class AudioProcessor {
       mid: { low: 150, high: 800 },
       treble: { low: 800, high: 4000 }
     };
-    
+
     // Browser detection and configuration
     this.browserType = this.detectBrowser();
     this.config = this.getBrowserConfig();
@@ -33,10 +33,10 @@ class AudioProcessor {
 
   detectBrowser() {
     const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('firefox')) return 'firefox';
-    if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'safari';
-    if (userAgent.includes('edge')) return 'edge';
-    if (userAgent.includes('chrome')) return 'chrome';
+    if (userAgent.includes('firefox')) {return 'firefox';}
+    if (userAgent.includes('safari') && !userAgent.includes('chrome')) {return 'safari';}
+    if (userAgent.includes('edge')) {return 'edge';}
+    if (userAgent.includes('chrome')) {return 'chrome';}
     return 'unknown';
   }
 
@@ -83,17 +83,17 @@ class AudioProcessor {
         latencyHint: 'balanced'
       }
     };
-    
+
     return configs[this.browserType] || configs.unknown;
   }
 
   async initialize(videoElement) {
     try {
       console.log(`Initializing AudioProcessor for ${this.browserType}`);
-      
+
       // Create audio context with proper fallback support
       let AudioContextClass = null;
-      
+
       // Try standard AudioContext first
       if (window.AudioContext) {
         AudioContextClass = window.AudioContext;
@@ -144,26 +144,26 @@ class AudioProcessor {
         console.error('Failed to create media element source:', sourceError);
         throw new Error('Cannot create audio source from video element');
       }
-      
+
       // Create analyser with browser-specific settings
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = this.config.bufferSize;
       this.analyser.smoothingTimeConstant = this.config.smoothingFactor;
-      
+
       // Create gain node for volume control
       this.gainNode = this.audioContext.createGain();
       this.gainNode.gain.value = 1.0;
-      
+
       // Create filters for speech enhancement
       this.createSpeechFilters();
-      
+
       // Connect audio nodes
       this.connectNodes();
-      
+
       // Start processing
       this.isProcessing = true;
       this.processAudio();
-      
+
       console.log(`Audio processor initialized successfully for ${this.browserType}`);
       return true;
     } catch (error) {
@@ -194,7 +194,7 @@ class AudioProcessor {
     // Additional notch filters for harmonic frequencies (browser-specific)
     this.harmonicFilters = [];
     const harmonicFrequencies = this.getHarmonicFrequencies();
-    
+
     harmonicFrequencies.forEach(freq => {
       const filter = this.audioContext.createBiquadFilter();
       filter.type = 'notch';
@@ -215,7 +215,7 @@ class AudioProcessor {
   getHarmonicFrequencies() {
     // Browser-specific harmonic frequencies
     const baseFrequencies = [110, 220, 440, 880, 1760]; // A2 to A6
-    
+
     if (this.browserType === 'safari') {
       // Safari: fewer filters for better performance
       return baseFrequencies.slice(1, 4);
@@ -231,41 +231,41 @@ class AudioProcessor {
   connectNodes() {
     // Connect source through processing chain
     let currentNode = this.source;
-    
+
     // Connect through main filters
     currentNode.connect(this.highPassFilter);
     currentNode = this.highPassFilter;
-    
+
     currentNode.connect(this.lowPassFilter);
     currentNode = this.lowPassFilter;
-    
+
     currentNode.connect(this.notchFilter);
     currentNode = this.notchFilter;
-    
+
     // Connect through harmonic filters
     this.harmonicFilters.forEach(filter => {
       currentNode.connect(filter);
       currentNode = filter;
     });
-    
+
     // Connect through compressor and gain
     currentNode.connect(this.compressor);
     this.compressor.connect(this.gainNode);
     this.gainNode.connect(this.audioContext.destination);
-    
+
     // Connect analyser for monitoring (parallel connection)
     this.source.connect(this.analyser);
   }
 
   processAudio() {
-    if (!this.isProcessing) return;
+    if (!this.isProcessing) {return;}
 
     const bufferLength = this.analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     const timeDataArray = new Uint8Array(bufferLength);
 
     const analyzeFrame = () => {
-      if (!this.isProcessing) return;
+      if (!this.isProcessing) {return;}
 
       try {
         // Check if audio context is still valid
@@ -311,10 +311,10 @@ class AudioProcessor {
         }
       } catch (error) {
         console.error('Error in audio processing frame:', error);
-        
+
         // Attempt recovery
         this.attemptRecovery();
-        
+
         // Continue processing if possible
         if (this.isProcessing) {
           if (this.browserType === 'safari') {
@@ -335,12 +335,12 @@ class AudioProcessor {
       this.lastMusicScore = 0;
       this.lastSpeechScore = 0;
       this.lastGain = 0.5;
-      
+
       // Reset gain to safe default
       if (this.gainNode && this.audioContext && this.audioContext.state !== 'closed') {
         this.gainNode.gain.setTargetAtTime(0.5, this.audioContext.currentTime, 0.1);
       }
-      
+
       console.log('Audio processing recovery attempted');
     } catch (recoveryError) {
       console.error('Failed to recover audio processing:', recoveryError);
@@ -395,17 +395,17 @@ class AudioProcessor {
 
     // Weighted scoring system
     let finalScore = musicScore / bufferLength;
-    
+
     // Boost score if we detect strong harmonic patterns
     if (harmonicRatio > 0.1) {
       finalScore *= 1.5;
     }
-    
+
     // Boost score if we detect rhythmic patterns
     if (rhythmicRatio > 0.05) {
       finalScore *= 1.3;
     }
-    
+
     // Boost score if we have balanced bass and treble (typical of music)
     if (bassRatio > 0.1 && trebleRatio > 0.1) {
       finalScore *= 1.2;
@@ -413,7 +413,7 @@ class AudioProcessor {
 
     // Normalize and apply smoothing
     finalScore = Math.min(finalScore, 1.0);
-    
+
     // Apply exponential smoothing for stability
     const alpha = 0.1;
     this.lastMusicScore = this.lastMusicScore || 0;
@@ -434,13 +434,13 @@ class AudioProcessor {
     for (let i = 0; i < bufferLength; i++) {
       const frequency = i * this.audioContext.sampleRate / (2 * bufferLength);
       const amplitude = frequencyData[i] / 255;
-      
+
       // Primary speech frequencies (85-255 Hz)
       if (frequency >= this.speechFrequencies.low && frequency <= this.speechFrequencies.high) {
         speechScore += amplitude * 2.0;
         speechFreqCount++;
       }
-      
+
       // Formant frequencies (speech characteristics)
       const formantFrequencies = [500, 1500, 2500, 3500]; // F1, F2, F3, F4
       formantFrequencies.forEach(formant => {
@@ -449,7 +449,7 @@ class AudioProcessor {
           formantCount++;
         }
       });
-      
+
       // Check for silence (speech pauses)
       if (amplitude < 0.1) {
         silenceCount++;
@@ -462,17 +462,17 @@ class AudioProcessor {
     const silenceRatio = silenceCount / bufferLength;
 
     let finalScore = speechScore / bufferLength;
-    
+
     // Boost score if we detect strong speech frequencies
     if (speechRatio > 0.05) {
       finalScore *= 1.8;
     }
-    
+
     // Boost score if we detect formants (characteristic of speech)
     if (formantRatio > 0.02) {
       finalScore *= 1.4;
     }
-    
+
     // Moderate boost for natural speech pauses
     if (silenceRatio > 0.1 && silenceRatio < 0.8) {
       finalScore *= 1.1;
@@ -480,7 +480,7 @@ class AudioProcessor {
 
     // Normalize and apply smoothing
     finalScore = Math.min(finalScore, 1.0);
-    
+
     // Apply exponential smoothing for stability
     const alpha = 0.1;
     this.lastSpeechScore = this.lastSpeechScore || 0;
@@ -495,8 +495,8 @@ class AudioProcessor {
     const musicalNotes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]; // C4 to B4
     const tolerance = this.browserType === 'safari' ? 15 : 10; // Safari: more tolerance
 
-    return musicalNotes.some(note => 
-      Math.abs(frequency - note) < tolerance || 
+    return musicalNotes.some(note =>
+      Math.abs(frequency - note) < tolerance ||
       Math.abs(frequency - note * 2) < tolerance ||
       Math.abs(frequency - note / 2) < tolerance
     );
@@ -505,7 +505,7 @@ class AudioProcessor {
   adjustGain(musicScore, speechScore) {
     // Browser-specific gain adjustment
     const gainAdjustment = this.getGainAdjustment(musicScore, speechScore);
-    
+
     if (this.browserType === 'safari') {
       // Safari: smoother transitions
       this.gainNode.gain.setTargetAtTime(gainAdjustment, this.audioContext.currentTime, 0.2);
@@ -517,13 +517,13 @@ class AudioProcessor {
 
   getGainAdjustment(musicScore, speechScore) {
     // Enhanced gain adjustment with more sophisticated logic
-    
+
     // Calculate the ratio of music to speech
     const musicSpeechRatio = musicScore / (speechScore + 0.1); // Avoid division by zero
-    
+
     // Base gain calculation
     let baseGain = 1.0;
-    
+
     if (musicScore > this.musicThreshold) {
       if (speechScore < 0.2) {
         // High music, very low speech - aggressive reduction
@@ -548,7 +548,7 @@ class AudioProcessor {
       // Low speech and music - default volume
       baseGain = 0.5;
     }
-    
+
     // Apply dynamic adjustment based on music-speech ratio
     if (musicSpeechRatio > 3.0) {
       // Very high music ratio - more aggressive reduction
@@ -560,27 +560,27 @@ class AudioProcessor {
       // Low music ratio - boost speech
       baseGain *= 1.1;
     }
-    
+
     // Apply smoothing to prevent jarring changes
     const alpha = 0.05; // Very slow smoothing for stability
     this.lastGain = this.lastGain || baseGain;
     const smoothedGain = this.lastGain * (1 - alpha) + baseGain * alpha;
     this.lastGain = smoothedGain;
-    
+
     // Ensure gain stays within reasonable bounds
     return Math.max(0.01, Math.min(1.0, smoothedGain));
   }
 
   updateStats(musicScore, speechScore) {
     this.processingStats.framesProcessed++;
-    
+
     if (musicScore > this.musicThreshold) {
       this.processingStats.musicDetected++;
     }
-    
+
     // Update average music level with smoothing
     const alpha = 0.01;
-    this.processingStats.averageMusicLevel = 
+    this.processingStats.averageMusicLevel =
       this.processingStats.averageMusicLevel * (1 - alpha) + musicScore * alpha;
   }
 
@@ -616,7 +616,7 @@ class AudioProcessor {
         notes: 'Similar to Chrome performance'
       }
     };
-    
+
     return recommendations[this.browserType] || recommendations.chrome;
   }
 
@@ -630,34 +630,34 @@ class AudioProcessor {
 
   destroy() {
     this.isProcessing = false;
-    
+
     // Disconnect all audio nodes
     if (this.source) {
       this.source.disconnect();
     }
-    
+
     if (this.analyser) {
       this.analyser.disconnect();
     }
-    
+
     if (this.gainNode) {
       this.gainNode.disconnect();
     }
-    
+
     // Disconnect filters
     [this.highPassFilter, this.lowPassFilter, this.notchFilter, this.compressor].forEach(node => {
-      if (node) node.disconnect();
+      if (node) {node.disconnect();}
     });
-    
+
     this.harmonicFilters.forEach(filter => {
       filter.disconnect();
     });
-    
+
     // Close audio context
     if (this.audioContext && this.audioContext.state !== 'closed') {
       this.audioContext.close();
     }
-    
+
     console.log(`AudioProcessor destroyed for ${this.browserType}`);
   }
 

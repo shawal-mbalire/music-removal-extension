@@ -18,8 +18,8 @@
     "validate:browser": "npm run test:all-browsers",
     "build": "echo 'Extension is ready for distribution'",
     "dev": "npm run test && npm run lint",
-    "prepublish": "npm run test:cross-browser && npm run lint",
-    "ci": "npm run test:all-browsers && npm run lint"
+    "ci": "npm run test:all-browsers && npm run lint",
+    "prepublishOnly": "npm run test:cross-browser && npm run lint"
   },
   "keywords": [
     "browser-extension",

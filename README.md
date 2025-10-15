@@ -1,5 +1,9 @@
 # Universal Music Removal Extension
 
+[![CI](https://github.com/shawal-mbalire/music-removal-extension/workflows/CI/badge.svg)](https://github.com/shawal-mbalire/music-removal-extension/actions/workflows/ci.yml)
+[![Multi-Browser Tests](https://github.com/shawal-mbalire/music-removal-extension/workflows/Multi-Browser%20Test%20Matrix/badge.svg)](https://github.com/shawal-mbalire/music-removal-extension/actions/workflows/test-matrix.yml)
+[![Release](https://github.com/shawal-mbalire/music-removal-extension/workflows/Release/badge.svg)](https://github.com/shawal-mbalire/music-removal-extension/actions/workflows/release.yml)
+
 A browser extension that removes background music from videos across multiple platforms while preserving speech audio in near real-time.
 
 ## Features
@@ -67,10 +71,45 @@ The extension uses advanced audio processing techniques:
 
 ## Testing
 
+### Continuous Integration/Continuous Deployment (CI/CD)
+
+This project uses GitHub Actions for automated testing and deployment:
+
+#### Automated Workflows
+
+1. **CI Workflow** (`ci.yml`)
+   - Runs on every push and pull request
+   - Lints code for quality checks
+   - Tests on Chrome, Firefox, and Edge
+   - Validates cross-browser compatibility
+   - Runs full validation suite
+
+2. **Multi-Browser Test Matrix** (`test-matrix.yml`)
+   - Tests on multiple operating systems (Ubuntu, Windows, macOS)
+   - Tests with different Node.js versions (18, 20)
+   - Runs daily scheduled tests
+   - Generates comprehensive test summary
+
+3. **Release Workflow** (`release.yml`)
+   - Automatically builds extension packages
+   - Creates Chrome and Firefox distribution files
+   - Uploads artifacts to GitHub releases
+   - Triggered on release creation
+
+#### Running Tests Locally
+
 ### Automated Testing
 ```bash
 # Run test suite
 npm test
+
+# Run browser-specific tests
+npm run test:chrome
+npm run test:firefox
+npm run test:edge
+
+# Run all browser tests
+npm run test:all-browsers
 
 # Run tests in watch mode
 npm run test:watch
@@ -86,7 +125,7 @@ npm run dev
 
 #### Browser Compatibility
 - [ ] Chrome 88+ - Full functionality
-- [ ] Firefox 109+ - Full functionality  
+- [ ] Firefox 109+ - Full functionality
 - [ ] Edge 88+ - Full functionality
 - [ ] Safari 14+ - Basic functionality
 

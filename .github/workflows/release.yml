@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  release:
+    types: [created, published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:all-browsers
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Create Chrome extension package
+        run: |
+          mkdir -p dist
+          zip -r dist/chrome-extension.zip \
+            manifest.json \
+            background.js \
+            content.js \
+            audioProcessor.js \
+            videoSelector.js \
+            popup/ \
+            icons/ \
+            -x "*.DS_Store" "*.git*"
+
+      - name: Create Firefox extension package
+        run: |
+          mkdir -p dist
+          zip -r dist/firefox-extension.zip \
+            manifest.json \
+            background.js \
+            content.js \
+            audioProcessor.js \
+            videoSelector.js \
+            popup/ \
+            icons/ \
+            -x "*.DS_Store" "*.git*"
+
+      - name: Upload Chrome extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: dist/chrome-extension.zip
+
+      - name: Upload Firefox extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox-extension
+          path: dist/firefox-extension.zip
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/chrome-extension.zip
+            dist/firefox-extension.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,7 +1,7 @@
 // Universal Music Removal Content Script
 // Handles video detection and audio processing across multiple platforms
 
-console.log("Universal Music Removal Extension Loaded");
+console.log('Universal Music Removal Extension Loaded');
 
 // Global state
 let audioProcessor = null;
@@ -9,7 +9,7 @@ let videoSelector = null;
 let isEnabled = true;
 let currentVideo = null;
 let isProcessing = false;
-let supportedSites = {
+const supportedSites = {
   'youtube.com': {
     selectors: ['video', '#movie_player video', '.html5-video-player video', 'ytd-player video'],
     name: 'YouTube'
@@ -89,8 +89,8 @@ async function loadScripts() {
 
 // Initialize video processing
 async function initializeVideoProcessing() {
-  if (isProcessing) return;
-  
+  if (isProcessing) {return;}
+
   const video = findVideoElement();
   if (!video) {
     console.log('No video element found, waiting...');
@@ -194,7 +194,7 @@ function isValidVideoElement(element) {
     } else if (element.tagName.toLowerCase() === 'iframe') {
       // Iframe - check if it contains video
       return element.src && (
-        element.src.includes('video') || 
+        element.src.includes('video') ||
         element.src.includes('player') ||
         element.src.includes('embed')
       );
@@ -207,7 +207,7 @@ function isValidVideoElement(element) {
       if (videoChild) {
         return this.isValidVideoElement(videoChild);
       }
-      
+
       // Check for video-related attributes
       const videoAttrs = ['data-video', 'data-player', 'data-src'];
       return videoAttrs.some(attr => element.hasAttribute(attr));
@@ -234,12 +234,12 @@ async function setupAudioProcessing(video) {
         const timeout = setTimeout(() => {
           reject(new Error('Video ready timeout'));
         }, 10000); // 10 second timeout
-        
+
         const handleReady = () => {
           clearTimeout(timeout);
           resolve();
         };
-        
+
         video.addEventListener('loadeddata', handleReady, { once: true });
         video.addEventListener('error', () => {
           clearTimeout(timeout);
@@ -256,14 +256,14 @@ async function setupAudioProcessing(video) {
 
     // Create new audio processor
     audioProcessor = new window.AudioProcessor();
-    
+
     // Initialize with video element
     const success = await audioProcessor.initialize(video);
-    
+
     if (success) {
       console.log('Audio processing setup complete');
       audioProcessor.setEnabled(isEnabled);
-      
+
       // Add video event listeners with error handling
       const addVideoListener = (event, handler) => {
         try {
@@ -272,32 +272,32 @@ async function setupAudioProcessing(video) {
           console.warn(`Failed to add ${event} listener:`, error);
         }
       };
-      
+
       addVideoListener('play', () => {
         if (audioProcessor && isEnabled) {
           audioProcessor.setEnabled(true);
         }
       });
-      
+
       addVideoListener('pause', () => {
         if (audioProcessor) {
           audioProcessor.setEnabled(false);
         }
       });
-      
+
       addVideoListener('ended', () => {
         if (audioProcessor) {
           audioProcessor.setEnabled(false);
         }
       });
-      
+
       addVideoListener('error', (error) => {
         console.error('Video error detected:', error);
         if (audioProcessor) {
           audioProcessor.setEnabled(false);
         }
       });
-      
+
       // Monitor for video source changes
       const originalSrc = video.src;
       const checkSrcChange = setInterval(() => {
@@ -307,7 +307,7 @@ async function setupAudioProcessing(video) {
           handleNavigation();
         }
       }, 2000);
-      
+
     } else {
       console.error('Failed to initialize audio processor');
       // Retry after a delay
@@ -320,7 +320,7 @@ async function setupAudioProcessing(video) {
     }
   } catch (error) {
     console.error('Error setting up audio processing:', error);
-    
+
     // Attempt recovery
     if (video && video.src) {
       console.log('Attempting recovery in 5 seconds...');
@@ -336,13 +336,13 @@ async function setupAudioProcessing(video) {
 // Handle manual video selection
 function handleManualVideoSelection(video) {
   console.log('Manual video selection:', video);
-  
+
   // Clean up existing processor
   if (audioProcessor) {
     audioProcessor.destroy();
     audioProcessor = null;
   }
-  
+
   currentVideo = video;
   setupAudioProcessing(video);
 }
@@ -383,7 +383,7 @@ function handleNavigation() {
   }
   currentVideo = null;
   isProcessing = false;
-  
+
   // Wait a bit for new content to load
   setTimeout(() => {
     initializeVideoProcessing();
@@ -394,7 +394,7 @@ function handleNavigation() {
 function setupNavigationDetection() {
   // Watch for URL changes
   let currentUrl = window.location.href;
-  
+
   const checkUrlChange = () => {
     if (window.location.href !== currentUrl) {
       currentUrl = window.location.href;
@@ -409,14 +409,14 @@ function setupNavigationDetection() {
   // Enhanced DOM monitoring for dynamic content
   const observer = new MutationObserver((mutations) => {
     let shouldReinitialize = false;
-    
+
     for (const mutation of mutations) {
       if (mutation.type === 'childList') {
         for (const node of mutation.addedNodes) {
           if (node.nodeType === Node.ELEMENT_NODE) {
             // Check if this looks like a new video page
             if (node.querySelector && (
-              node.querySelector('video') || 
+              node.querySelector('video') ||
               node.querySelector('[class*="video"]') ||
               node.querySelector('[class*="player"]')
             )) {
@@ -424,7 +424,7 @@ function setupNavigationDetection() {
               shouldReinitialize = true;
               break;
             }
-            
+
             // Check if the node itself is a video element
             if (node.tagName && node.tagName.toLowerCase() === 'video') {
               console.log('Direct video element added');
@@ -435,7 +435,7 @@ function setupNavigationDetection() {
         }
       } else if (mutation.type === 'attributes') {
         // Watch for attribute changes that might indicate video loading
-        if (mutation.attributeName === 'src' || 
+        if (mutation.attributeName === 'src' ||
             mutation.attributeName === 'data-src' ||
             mutation.attributeName === 'data-video') {
           console.log('Video source attribute changed');
@@ -443,7 +443,7 @@ function setupNavigationDetection() {
         }
       }
     }
-    
+
     if (shouldReinitialize) {
       // Debounce reinitialization to avoid multiple calls
       clearTimeout(window.reinitTimeout);
@@ -483,16 +483,16 @@ async function getInitialState() {
 // Initialize extension
 async function initialize() {
   console.log('Initializing Universal Music Removal Extension');
-  
+
   // Get initial state
   await getInitialState();
-  
+
   // Load required scripts
   await loadScripts();
-  
+
   // Setup navigation detection
   setupNavigationDetection();
-  
+
   // Initial video processing attempt
   setTimeout(initializeVideoProcessing, 1000);
 }
