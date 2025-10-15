@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-06-23T04:48:10.544Z",
+  "timestamp": "2025-10-15T02:42:24.592Z",
   "summary": {
     "totalBrowsers": 4,
     "testedBrowsers": 4,
@@ -9,14 +9,15 @@
     "chrome": {
       "success": true,
       "results": {
-        "passed": 118,
-        "failed": 1,
+        "passed": 117,
+        "failed": 2,
         "total": 119
       },
       "logs": [
         "🧪 Running Universal Music Removal Extension Tests\n",
         "🌐 Testing for Chrome (chrome)",
         "📋 Testing Manifest Configuration...",
+        "    ❌ Should have tabCapture permission",
         "  ✅ Manifest tests passed\n",
         "🎵 Testing Audio Processor...",
         "  ✅ Audio processor tests passed\n",
@@ -29,36 +30,37 @@
         "🖥️ Testing Popup Interface...",
         "  ✅ Popup interface tests passed\n",
         "🌍 Testing Cross-Browser Compatibility...",
-        "    ❌ Should have audio context fallback",
         "  ✅ Cross-browser compatibility tests passed\n",
         "⚡ Testing Performance Considerations...",
         "  ✅ Performance tests passed\n",
         "🔧 Testing Browser-Specific Features...",
+        "    ❌ Should specify incognito mode support",
         "  ✅ Browser-specific feature tests passed\n",
         "📊 Test Results Summary:",
         "  Browser: Chrome (chrome)",
         "  Total Tests: 119",
-        "  Passed: 118 ✅",
-        "  Failed: 1 ❌",
-        "  Success Rate: 99.2%",
+        "  Passed: 117 ✅",
+        "  Failed: 2 ❌",
+        "  Success Rate: 98.3%",
         "\n⚠️ Some tests failed. Please review and fix the issues.",
         "\n🌐 Browser Recommendations for Chrome:",
         "  Status: excellent",
         "  Notes: Full feature support, best performance"
       ],
-      "timestamp": "2025-06-23T04:48:10.537Z"
+      "timestamp": "2025-10-15T02:42:24.582Z"
     },
     "firefox": {
       "success": true,
       "results": {
-        "passed": 118,
-        "failed": 1,
+        "passed": 117,
+        "failed": 2,
         "total": 119
       },
       "logs": [
         "🧪 Running Universal Music Removal Extension Tests\n",
         "🌐 Testing for Firefox (firefox)",
         "📋 Testing Manifest Configuration...",
+        "    ❌ Should have tabCapture permission",
         "  ✅ Manifest tests passed\n",
         "🎵 Testing Audio Processor...",
         "  ✅ Audio processor tests passed\n",
@@ -71,18 +73,18 @@
         "🖥️ Testing Popup Interface...",
         "  ✅ Popup interface tests passed\n",
         "🌍 Testing Cross-Browser Compatibility...",
-        "    ❌ Should have audio context fallback",
         "  ✅ Cross-browser compatibility tests passed\n",
         "⚡ Testing Performance Considerations...",
         "  ✅ Performance tests passed\n",
         "🔧 Testing Browser-Specific Features...",
+        "    ❌ Should specify incognito mode support",
         "  ✅ Browser-specific feature tests passed\n",
         "📊 Test Results Summary:",
         "  Browser: Firefox (firefox)",
         "  Total Tests: 119",
-        "  Passed: 118 ✅",
-        "  Failed: 1 ❌",
-        "  Success Rate: 99.2%",
+        "  Passed: 117 ✅",
+        "  Failed: 2 ❌",
+        "  Success Rate: 98.3%",
         "\n⚠️ Some tests failed. Please review and fix the issues.",
         "\n🌐 Browser Recommendations for Firefox:",
         "  Status: very-good",
@@ -90,19 +92,20 @@
         "  Suggestions:",
         "    • May need user interaction for audio context"
       ],
-      "timestamp": "2025-06-23T04:48:10.540Z"
+      "timestamp": "2025-10-15T02:42:24.586Z"
     },
     "safari": {
       "success": true,
       "results": {
-        "passed": 118,
-        "failed": 1,
+        "passed": 117,
+        "failed": 2,
         "total": 119
       },
       "logs": [
         "🧪 Running Universal Music Removal Extension Tests\n",
         "🌐 Testing for Safari (safari)",
         "📋 Testing Manifest Configuration...",
+        "    ❌ Should have tabCapture permission",
         "  ✅ Manifest tests passed\n",
         "🎵 Testing Audio Processor...",
         "  ✅ Audio processor tests passed\n",
@@ -115,18 +118,18 @@
         "🖥️ Testing Popup Interface...",
         "  ✅ Popup interface tests passed\n",
         "🌍 Testing Cross-Browser Compatibility...",
-        "    ❌ Should have audio context fallback",
         "  ✅ Cross-browser compatibility tests passed\n",
         "⚡ Testing Performance Considerations...",
         "  ✅ Performance tests passed\n",
         "🔧 Testing Browser-Specific Features...",
+        "    ❌ Should specify incognito mode support",
         "  ✅ Browser-specific feature tests passed\n",
         "📊 Test Results Summary:",
         "  Browser: Safari (safari)",
         "  Total Tests: 119",
-        "  Passed: 118 ✅",
-        "  Failed: 1 ❌",
-        "  Success Rate: 99.2%",
+        "  Passed: 117 ✅",
+        "  Failed: 2 ❌",
+        "  Success Rate: 98.3%",
         "\n⚠️ Some tests failed. Please review and fix the issues.",
         "\n🌐 Browser Recommendations for Safari:",
         "  Status: good",
@@ -136,19 +139,20 @@
         "    • Some features may not work as expected",
         "    • Consider using manual video selection"
       ],
-      "timestamp": "2025-06-23T04:48:10.542Z"
+      "timestamp": "2025-10-15T02:42:24.588Z"
     },
     "edge": {
       "success": true,
       "results": {
-        "passed": 118,
-        "failed": 1,
+        "passed": 117,
+        "failed": 2,
         "total": 119
       },
       "logs": [
         "🧪 Running Universal Music Removal Extension Tests\n",
         "🌐 Testing for Edge (edge)",
         "📋 Testing Manifest Configuration...",
+        "    ❌ Should have tabCapture permission",
         "  ✅ Manifest tests passed\n",
         "🎵 Testing Audio Processor...",
         "  ✅ Audio processor tests passed\n",
@@ -161,24 +165,24 @@
         "🖥️ Testing Popup Interface...",
         "  ✅ Popup interface tests passed\n",
         "🌍 Testing Cross-Browser Compatibility...",
-        "    ❌ Should have audio context fallback",
         "  ✅ Cross-browser compatibility tests passed\n",
         "⚡ Testing Performance Considerations...",
         "  ✅ Performance tests passed\n",
         "🔧 Testing Browser-Specific Features...",
+        "    ❌ Should specify incognito mode support",
         "  ✅ Browser-specific feature tests passed\n",
         "📊 Test Results Summary:",
         "  Browser: Edge (edge)",
         "  Total Tests: 119",
-        "  Passed: 118 ✅",
-        "  Failed: 1 ❌",
-        "  Success Rate: 99.2%",
+        "  Passed: 117 ✅",
+        "  Failed: 2 ❌",
+        "  Success Rate: 98.3%",
         "\n⚠️ Some tests failed. Please review and fix the issues.",
         "\n🌐 Browser Recommendations for Edge:",
         "  Status: excellent",
         "  Notes: Similar to Chrome performance"
       ],
-      "timestamp": "2025-06-23T04:48:10.543Z"
+      "timestamp": "2025-10-15T02:42:24.590Z"
     }
   },
   "recommendations": {
